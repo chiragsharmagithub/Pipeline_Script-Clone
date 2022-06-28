@@ -1,0 +1,42 @@
+// This will run Jobs (or tasks) on master and slave (agent) servers/ nodes parallelly.
+
+pipeline {
+    agent none
+    stages {
+
+        stage('Non-Parallel Stage') {
+            agent {
+                label "master"
+            }
+            steps {
+                echo "This stage will be triggered first (non-parallelly)"
+            }
+        }
+
+        stage('Run Tests') {
+            // 'parallel' keyword is used to run multiple jobs parallelly
+            parallel {
+
+                stage('Test on Windows (slave/agent node)') {
+                    agent {
+                        label "Windows_Node"
+                    }
+                    steps {
+                        echo "Task 1 run on slave/agent server/node parallelly."
+                    }
+                }
+
+                stage('Test on Master (node)') {
+                    agent {
+                        label "master"
+                    }
+                    steps {
+                        echo "Task 1 run on Master server/node parallelly."
+                    }
+                }
+
+            }
+        }
+
+    }
+}
